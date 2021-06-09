@@ -31,7 +31,7 @@
  * or as a tuple of the form [update, data].
  * Any other update result type will be ignored, hence the return type `any`.
  */
-export type Up<T> = (update: Update<T>, data?: any, options?: UpOptions) => (event?: Event) => any
+export type Up<T> = (update?: Update<T>, data?: T, options?: UpOptions) => (event?: Event) => any
 
 /**
  * A function that updates data, optionally accepting the event that triggered it.
@@ -83,6 +83,11 @@ export type UpContext = {
    * This is used for creating non-global update scopes, for example within a specific component.
    */
   local?: boolean
+
+  /**
+   * An optional update to be performed immediately to initialise the context.
+   */
+  init?: Update<any>
 }
 
 /**
@@ -166,7 +171,7 @@ export let up: Up<any>
  * the result is also assigned to the module level `up` function.
  * This is standard practice for global-state apps.
  *
- * If `context.local` is set to true then the returned `up` function
+ * If `context.local` is set to true then the promised `up` function
  * is local to the provided context and no global reference to it is exported.
  * This is useful for components with internal nested state.
  *
@@ -182,7 +187,7 @@ export let up: Up<any>
  * })
  *```
  */
-export const start = (context: UpContext): Up<any> => {
+export const start = async (context: UpContext): Promise<Up<any>> => {
   const log = context.log === true ? console.log
     : typeof context.log === "function" ? context.log
       : () => {}
@@ -243,6 +248,10 @@ export const start = (context: UpContext): Up<any> => {
     }
   }
 
+  // Assign the global `up` reference
   context.local || (up = started)
+  // Run any initial update
+  await started(context.init)()
+  // Return the created `up` function for local usage
   return started
 }
