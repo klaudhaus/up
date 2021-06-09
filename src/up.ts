@@ -1,10 +1,11 @@
 /**
+ * ```
  *     _   _ ___
  *   / / / / __ \
  *  / /_/ / /_/ /
  *  \____/  ___/
  *      /_/
- *
+ *```
  *
  * A simple, local/global, framework-agnostic, event-driven,
  * reactive application state mechanism.
@@ -16,13 +17,13 @@
  * that will trigger the `review` function of its associated context at well-defined points.
  * These are:
  *
- * (1) Upon completion of a synchronous update
- * (2) Prior to first asynchronous stage of an update
- * (3) Upon final promise resolution of an asynchronous update
- * (4) For all similar points of any subsequent (chained) updates
+ * * Upon completion of a synchronous update
+ * * Prior to first asynchronous stage of an update
+ * * Upon final promise resolution of an asynchronous update
+ * * For all similar points of any subsequent (chained) updates
  *     that are returned as either:
- *   (a) A single update
- *   (b) An array of updates
+ *   * A single update
+ *   * An array of updates
  *
  * Subsequent update(s) may be specified as a single function reference
  * in which case the same data is passed along the chain,

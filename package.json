@@ -6,7 +6,8 @@
   "main": "lib/up.js",
   "scripts": {
     "dev": "tsc --watch",
-    "install": "tsc"
+    "doc": "typedoc --out doc ./src/up.ts",
+    "install": "tsc & npm run doc"
   },
   "types": "lib/up.d.ts",
   "devDependencies": {
@@ -17,6 +18,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
+    "typedoc": "^0.20.36",
     "typescript": "^4.1.4"
-	}
+  }
 }
