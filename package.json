@@ -1,13 +1,13 @@
 {
   "name": "@klaudhaus/up",
   "author": "tstewart@klaudhaus.com",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "main": "lib/up.js",
   "scripts": {
     "dev": "tsc --watch",
     "doc": "typedoc --out doc ./src/up.ts",
-    "install": "tsc & npm run doc"
+    "install": "tsc"
   },
   "types": "lib/up.d.ts",
   "devDependencies": {
