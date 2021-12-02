@@ -250,8 +250,8 @@ export const startUp = async (context: UpContext): Promise<Up<any>> => {
   }
 
   // Assign the global `up` reference
-  context.local || (up = started)
-  await context.review?.()
+  if (!context.local) up = started
+
   // Return the created `up` function for local usage
   return started
 }
