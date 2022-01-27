@@ -1,16 +1,13 @@
 {
   "name": "@metaliq/up",
   "author": "tstewart@klaudhaus.com",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "main": "lib/up.js",
   "scripts": {
     "dev": "tsc --watch",
     "doc": "typedoc --out doc ./src/up.ts",
-    "install": "npm run local-or-peer-tsc",
-    "local-or-peer-tsc": "( call npm run local-or-peer-tsc:win ) || npm run local-or-peer-tsc:nix",
-    "local-or-peer-tsc:win": "if exist node_modules\\typescript tsc else (node ..\\..\\typescript\\bin\\tsc)",
-    "local-or-peer-tsc:nix": "test ./node_modules/typescript && tsc || node ../../typescript/bin/tsc"
+    "prepare": "npm run doc && tsc"
   },
   "types": "lib/up.d.ts",
   "devDependencies": {

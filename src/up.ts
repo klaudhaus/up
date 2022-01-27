@@ -176,7 +176,7 @@ export let up: <T> (update?: Update<T>, data?: T, options?: UpOptions) => (messa
  *
  * Example: to bootstrap a typical Lit app with console logging:
  * ```
- * import { start } from "@klaudhaus/up"
+ * import { start } from "@metaliq/up"
  * import { render } from "lit"
  * import { view, model } from "./my-app-content"
  *
