@@ -227,7 +227,7 @@ export const startUp = async (context: UpContext): Promise<Up<any>> => {
       result = await result
     }
     // Review after update
-    await context.review?.()
+    await context.review?.(data)
 
     // Handle update chaining
     if (!Array.isArray(result) || typeof result[0] === "function") {
