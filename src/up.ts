@@ -232,19 +232,19 @@ export const startUp = async (context: UpContext): Promise<Up<any>> => {
     // Handle update chaining
     if (!Array.isArray(result) || typeof result[0] === "function") {
       // Normalize any chained results to an array
-      result = [result]
+      result = [result].filter(Boolean)
     }
     const opts: UpOptions = { isChained: true }
     for (const chained of result) {
       if (typeof chained === "function") {
         // Simple function reference
-        started(chained, data, opts)
+        await started(chained, data, opts)(message)
       } else if (Array.isArray(chained) && typeof chained[0] === "function") {
         // Tuple of the form [update, data?]
-        started(chained[0], chained[1], opts)
+        await started(chained[0], chained[1], opts)(message)
       } else if (typeof chained?.update === "function") {
         // Object of the form { update, data? }
-        started(chained.update, opts)
+        await started(chained.update, chained.data, opts)(message)
       }
     }
   }
