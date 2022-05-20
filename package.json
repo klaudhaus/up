@@ -1,7 +1,7 @@
 {
   "name": "@metaliq/up",
   "author": "tstewart@klaudhaus.com",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "type": "module",
   "main": "lib/up.js",
   "scripts": {
