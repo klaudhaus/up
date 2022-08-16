@@ -31,12 +31,12 @@
  * or as a tuple of the form [update, data].
  * Any other update result type will be ignored, hence the return type `any`.
  */
-export type Up<T> = (update?: Update<T>, data?: T, options?: UpOptions) => (message?: any) => any
+export type Up<T, D = any> = (update?: Update<T>, on?: T, data?: D, options?: UpOptions) => (message?: any) => any
 
 /**
  * A function that updates data, optionally accepting a message such as the event that triggered it.
  */
-export type Update<T> = (data?: T, message?: any) => any
+export type Update<T, D = any> = (on?: T, data?: D, message?: any) => any
 
 /**
  * Options for defining subsequent processing of a browser event after being handled by `up`.
@@ -90,7 +90,7 @@ export type LogFunction<T> = (entry: LogEntry<T>) => any
 /**
  * The values that will be sent to any specified logging function.
  */
-export type LogEntry<T> = {
+export type LogEntry<T, D = any> = {
   /**
    * Name of update function.
    */
@@ -112,14 +112,19 @@ export type LogEntry<T> = {
   isChained?: boolean
 
   /**
-   * The update function
+   * The update function.
    */
   update?: Update<T>
 
   /**
-   * Data provided to update
+   * The object being updated.
    */
-  data?: T
+  on?: T
+
+  /**
+   * Additional information for the update.
+   */
+  data?: D
 
   /**
    * Message / event that triggered the update
@@ -159,7 +164,7 @@ export type LogEntry<T> = {
  * up(bootstrap, model)()
  * ```
  */
-export let up: <T> (update?: Update<T>, data?: T, options?: UpOptions) => (message?: any) => any
+export let up: <T, D> (update?: Update<T>, on?: T, data?: D, options?: UpOptions) => (message?: any) => any
 // Note: `up` effectively redefines `Up` type here.
 // Typing it as Up<any> means losing type information on T, and thus type checking between update and data types.
 
@@ -194,7 +199,7 @@ export const startUp = async (context: UpContext): Promise<Up<any>> => {
       : () => {}
 
   const started: Up<any> = (
-    update, data, { doDefault = false, propagate = false, isChained = false } = {}
+    update, on, data, { doDefault = false, propagate = false, isChained = false } = {}
   ) => async (message) => {
     doDefault || message?.preventDefault?.()
     propagate || message?.stopPropagation?.()
@@ -205,6 +210,7 @@ export const startUp = async (context: UpContext): Promise<Up<any>> => {
       isPromised: false,
       isChained,
       update,
+      on,
       data,
       message
     }
@@ -213,7 +219,7 @@ export const startUp = async (context: UpContext): Promise<Up<any>> => {
     try {
       // Log and perform update
       await log(entry)
-      result = update?.(data, message)
+      result = update?.(on, data, message)
     } catch (e) {
       // Catch any update error, review (for example to display error state) and rethrow to halt the chain
       await context.review?.()
@@ -227,7 +233,7 @@ export const startUp = async (context: UpContext): Promise<Up<any>> => {
       result = await result
     }
     // Review after update
-    await context.review?.(data)
+    await context.review?.(on, data, message)
 
     // Handle update chaining
     if (!Array.isArray(result) || typeof result[0] === "function") {
@@ -238,13 +244,13 @@ export const startUp = async (context: UpContext): Promise<Up<any>> => {
     for (const chained of result) {
       if (typeof chained === "function") {
         // Simple function reference
-        await started(chained, data, opts)(message)
+        await started(chained, on, data, opts)(message)
       } else if (Array.isArray(chained) && typeof chained[0] === "function") {
-        // Tuple of the form [update, data?]
+        // Tuple of the form [update, on?, data?]
         await started(chained[0], chained[1], opts)(message)
       } else if (typeof chained?.update === "function") {
-        // Object of the form { update, data? }
-        await started(chained.update, chained.data, opts)(message)
+        // Object of the form { update, on?, data? }
+        await started(chained.update, chained.on, chained.data, opts)(message)
       }
     }
   }
